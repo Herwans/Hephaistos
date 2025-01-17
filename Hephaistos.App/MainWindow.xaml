@@ -4,9 +4,34 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hephaistos.App"
+        xmlns:data="clr-namespace:Hephaistos.App.Entities"
+        xmlns:table="clr-namespace:Hephaistos.App.Ui.Components.Table"
+        xmlns:vm="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="MainWindow" Height="720" Width="1280">
+        <DockPanel LastChildFill="True">
+            <DockPanel Margin="8" DockPanel.Dock="Top">
+                <Label DockPanel.Dock="Left" Content="Directory" />
+                <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
+                <TextBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+            </DockPanel>
+            <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top"/>
+            <ListView ItemsSource="{Binding Lines}"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsChecked}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding IsDirectory}" />
+                        <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
+                        <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
 </Window>
