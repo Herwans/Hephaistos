@@ -14,10 +14,5 @@ namespace Hephaistos.App
             MainViewModel vm = new();
             DataContext = vm;
         }
-
-        private void ListView_Scroll()
-        {
-
-        }
     }
 }
