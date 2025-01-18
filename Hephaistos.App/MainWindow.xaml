@@ -15,11 +15,14 @@
                     <TextBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
                 </DockPanel>
                 <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top" />
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <Button Content="Refresh" Padding="8" Margin="8" Command="{Binding RefreshPreviewCommand}" DockPanel.Dock="Top" />
+                </StackPanel>
                 <ListView ItemsSource="{Binding Lines}"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn>
+                            <GridViewColumn Width="32">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsChecked}" />
@@ -29,6 +32,7 @@
                             <GridViewColumn DisplayMemberBinding="{Binding IsDirectory}" />
                             <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
                             <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
+                            <GridViewColumn DisplayMemberBinding="{Binding Extension}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -51,6 +55,7 @@
                                     <ColumnDefinition Width="32" />
                                     <ColumnDefinition Width="32" />
                                     <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="32" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
@@ -60,9 +65,10 @@
                                 <Button Content="D"
                                         Command="{Binding DataContext.DownRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding Position, Mode=TwoWay}" Grid.Column="1" />
-                                <Label Content="{Binding Position, Mode=TwoWay}" Grid.Column="2" />
-                                <TextBox Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="3" />
-                                <TextBox Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="4" />
+                                <Label Content="{Binding Position, Mode=TwoWay}" Grid.Column="2" HorizontalAlignment="Center" />
+                                <CheckBox IsChecked="{Binding IsRegex}" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBox Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="4" />
+                                <TextBox Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="5" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

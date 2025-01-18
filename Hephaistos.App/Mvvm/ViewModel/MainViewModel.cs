@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Hephaistos.App.Entities;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Hephaistos.App.Mvvm.ViewModel
 {
@@ -41,8 +42,9 @@ namespace Hephaistos.App.Mvvm.ViewModel
             {
                 Lines.Add(new LineEntity
                 {
-                    OldValue = Path.GetFileName(element),
-                    NewValue = Path.GetFileName(element)
+                    OldValue = Path.GetFileNameWithoutExtension(element),
+                    NewValue = Path.GetFileNameWithoutExtension(element),
+                    Extension = Path.GetExtension(element)
                 });
             }
 
@@ -51,9 +53,32 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 Lines.Add(new LineEntity
                 {
                     IsDirectory = true,
-                    OldValue = Path.GetFileName(element),
-                    NewValue = Path.GetFileName(element)
+                    OldValue = Path.GetFileNameWithoutExtension(element),
+                    NewValue = Path.GetFileNameWithoutExtension(element)
                 });
+            }
+        }
+
+        [RelayCommand]
+        private void RefreshPreview()
+        {
+            if (Lines == null || Rules == null) return;
+            foreach (LineEntity line in Lines)
+            {
+                if (line.OldValue == null) continue;
+                string preview = line.OldValue;
+                foreach (RuleEntity rule in Rules)
+                {
+                    if (rule.IsRegex)
+                    {
+                        preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                    }
+                    else
+                    {
+                        preview = preview.Replace(rule.Pattern, rule.Replacement);
+                    }
+                }
+                line.NewValue = preview;
             }
         }
 
