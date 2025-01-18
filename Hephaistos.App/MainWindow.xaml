@@ -18,6 +18,7 @@
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                     <Button Content="Refresh" Padding="8" Margin="8" Command="{Binding RefreshPreviewCommand}" DockPanel.Dock="Top" />
                 </StackPanel>
+                <Button DockPanel.Dock="Bottom" Content="APPLY" Command="{Binding ApplyRulesCommand}" />
                 <ListView ItemsSource="{Binding Lines}"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListView.View>

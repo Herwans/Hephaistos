@@ -82,7 +82,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
             {
                 if (line.OldValue == null) continue;
                 string preview = line.OldValue;
-                foreach (RuleEntity rule in Rules)
+                foreach (RuleEntity rule in Rules.Where(r => r.Pattern != ""))
                 {
                     if (rule.IsRegex)
                     {
@@ -128,6 +128,28 @@ namespace Hephaistos.App.Mvvm.ViewModel
             Rules[currentIndex].Position = position + 1;
             Rules[currentIndex + 1].Position--;
             Rules.Move(currentIndex, currentIndex + 1);
+        }
+
+        [RelayCommand]
+        private void ApplyRules()
+        {
+            foreach (LineEntity element in Lines.Where(line => line.IsChecked))
+            {
+                if (element.IsDirectory)
+                {
+                    Directory.Move(
+                        Path.Combine(RootDirectory, element.OldValue),
+                        Path.Combine(RootDirectory, element.NewValue)
+                    );
+                }
+                else
+                {
+                    File.Move(
+                        Path.Combine(RootDirectory, element.OldValue + element.Extension),
+                        Path.Combine(RootDirectory, element.NewValue + element.Extension)
+                    );
+                }
+            }
         }
     }
 }
