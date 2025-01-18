@@ -14,6 +14,9 @@ namespace Hephaistos.App.Mvvm.ViewModel
         [ObservableProperty]
         private ObservableCollection<LineEntity>? lines;
 
+        [ObservableProperty]
+        private ObservableCollection<RuleEntity> rules = [];
+
         [RelayCommand]
         private void BrowseDirectory()
         {
@@ -52,6 +55,39 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     NewValue = Path.GetFileName(element)
                 });
             }
+        }
+
+        [RelayCommand]
+        private void AddRule()
+        {
+            Rules.Add(new()
+            {
+                Position = Rules.Count,
+            });
+        }
+
+        [RelayCommand]
+        private void UpRule(int position)
+        {
+            if (position == 0) return;
+            RuleEntity rule = Rules.First(r => r.Position == position);
+            int currentIndex = Rules.IndexOf(rule);
+
+            Rules[currentIndex].Position = position - 1;
+            Rules[currentIndex - 1].Position++;
+            Rules.Move(currentIndex, currentIndex - 1);
+        }
+
+        [RelayCommand]
+        private void DownRule(int position)
+        {
+            if (position == Rules.Count - 1) return;
+            RuleEntity rule = Rules.First(r => r.Position == position);
+            int currentIndex = Rules.IndexOf(rule);
+
+            Rules[currentIndex].Position = position + 1;
+            Rules[currentIndex + 1].Position--;
+            Rules.Move(currentIndex, currentIndex + 1);
         }
     }
 }

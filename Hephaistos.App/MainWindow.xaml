@@ -1,37 +1,73 @@
 ﻿<Window x:Class="Hephaistos.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Hephaistos.App"
-        xmlns:data="clr-namespace:Hephaistos.App.Entities"
-        xmlns:table="clr-namespace:Hephaistos.App.Ui.Components.Table"
-        xmlns:vm="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
-        <DockPanel LastChildFill="True">
-            <DockPanel Margin="8" DockPanel.Dock="Top">
-                <Label DockPanel.Dock="Left" Content="Directory" />
-                <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
-                <TextBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+
+    <TabControl>
+        <TabItem Header="Replacement">
+            <DockPanel LastChildFill="True">
+                <DockPanel Margin="8" DockPanel.Dock="Top">
+                    <Label DockPanel.Dock="Left" Content="Directory" />
+                    <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
+                    <TextBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+                </DockPanel>
+                <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top" />
+                <ListView ItemsSource="{Binding Lines}"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsChecked}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding IsDirectory}" />
+                            <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
+                            <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </DockPanel>
-            <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top"/>
-            <ListView ItemsSource="{Binding Lines}"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsChecked}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn DisplayMemberBinding="{Binding IsDirectory}" />
-                        <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
-                        <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </DockPanel>
+        </TabItem>
+        <TabItem Header="Rules">
+            <DockPanel LastChildFill="True">
+                <DockPanel Margin="8" DockPanel.Dock="Top">
+                    <Label DockPanel.Dock="Left" Content="Rules" />
+                    <Button DockPanel.Dock="Right" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
+                    <ComboBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+                </DockPanel>
+                <Button Content="Add" Command="{Binding AddRuleCommand}" DockPanel.Dock="Bottom" />
+                <ItemsControl ItemsSource="{Binding Rules}"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="32">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Content="U"
+                                        Command="{Binding DataContext.UpRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Position, Mode=TwoWay}" />
+                                <Button Content="D"
+                                        Command="{Binding DataContext.DownRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Position, Mode=TwoWay}" Grid.Column="1" />
+                                <Label Content="{Binding Position, Mode=TwoWay}" Grid.Column="2" />
+                                <TextBox Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="3" />
+                                <TextBox Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="4" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>
