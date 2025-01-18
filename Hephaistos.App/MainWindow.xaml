@@ -42,6 +42,7 @@
             <DockPanel LastChildFill="True">
                 <DockPanel Margin="8" DockPanel.Dock="Top">
                     <Label DockPanel.Dock="Left" Content="Rules" />
+                    <Button DockPanel.Dock="Right" Content="Save current" Padding="16,0" Command="{Binding SaveCurrentCommand}" />
                     <Button DockPanel.Dock="Right" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
                     <ComboBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
                 </DockPanel>

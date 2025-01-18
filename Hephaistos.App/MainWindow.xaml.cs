@@ -14,9 +14,5 @@ namespace Hephaistos.App
             MainViewModel vm = new();
             DataContext = vm;
         }
-
-        private void ListView_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
-        {
-        }
     }
 }

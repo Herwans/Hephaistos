@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Hephaistos.App.Entities;
+using Hephaistos.App.Services;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -9,6 +10,8 @@ namespace Hephaistos.App.Mvvm.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
+        private SaveService saveService;
+
         [ObservableProperty]
         private string? rootDirectory;
 
@@ -17,6 +20,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
         [ObservableProperty]
         private ObservableCollection<RuleEntity> rules = [];
+
+        public MainViewModel()
+        {
+            saveService = new SaveService();
+            Rules = saveService.GetCurrent() ?? [];
+        }
 
         [RelayCommand]
         private void BrowseDirectory()
@@ -31,6 +40,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
             {
                 RootDirectory = dialog.FolderName;
             }
+        }
+
+        [RelayCommand]
+        private void SaveCurrent()
+        {
+            saveService.SaveCurrent(Rules);
         }
 
         [RelayCommand]
