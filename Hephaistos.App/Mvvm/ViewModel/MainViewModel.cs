@@ -10,7 +10,10 @@ namespace Hephaistos.App.Mvvm.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
-        private SaveService saveService;
+        private readonly SaveService saveService;
+
+        [ObservableProperty]
+        private string saveFile = "";
 
         [ObservableProperty]
         private string? rootDirectory;
@@ -21,10 +24,23 @@ namespace Hephaistos.App.Mvvm.ViewModel
         [ObservableProperty]
         private ObservableCollection<RuleEntity> rules = [];
 
+        [ObservableProperty]
+        private ObservableCollection<string> rulesSavedFiles = [];
+
+        [ObservableProperty]
+        private string? selectedFile;
+
         public MainViewModel()
         {
             saveService = new SaveService();
-            Rules = saveService.GetCurrent() ?? [];
+            Rules = new(saveService.AutoLoad() ?? []);
+            RulesSavedFiles = new(saveService.GetRulesFiles());
+        }
+
+        [RelayCommand]
+        private void ClosingView()
+        {
+            saveService.AutoSave(Rules);
         }
 
         [RelayCommand]
@@ -43,9 +59,20 @@ namespace Hephaistos.App.Mvvm.ViewModel
         }
 
         [RelayCommand]
-        private void SaveCurrent()
+        private void SaveRules()
         {
-            saveService.SaveCurrent(Rules);
+            if (SaveFile == "") return;
+            saveService.SaveRules(SaveFile, Rules);
+            RulesSavedFiles = new(saveService.GetRulesFiles());
+        }
+
+        [RelayCommand]
+        private void LoadRules()
+        {
+            string? name = Path.GetFileNameWithoutExtension(SelectedFile);
+            if (name == null) return;
+            Rules = new(saveService.LoadRules(name));
+            SaveFile = name;
         }
 
         [RelayCommand]
