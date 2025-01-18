@@ -146,7 +146,8 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 {
                     File.Move(
                         Path.Combine(RootDirectory, element.OldValue + element.Extension),
-                        Path.Combine(RootDirectory, element.NewValue + element.Extension)
+                        Path.Combine(RootDirectory, element.NewValue + element.Extension),
+                        false
                     );
                 }
             }
