@@ -4,8 +4,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         Title="MainWindow" Height="720" Width="1280">
-
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding ClosingViewCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <TabControl>
         <TabItem Header="Replacement">
             <DockPanel LastChildFill="True">
@@ -39,14 +44,27 @@
                 </ListView>
             </DockPanel>
         </TabItem>
-        <TabItem Header="Rules">
+        <TabItem Header="Rules" Height="20" VerticalAlignment="Top">
             <DockPanel LastChildFill="True">
-                <DockPanel Margin="8" DockPanel.Dock="Top">
-                    <Label DockPanel.Dock="Left" Content="Rules" />
-                    <Button DockPanel.Dock="Right" Content="Save current" Padding="16,0" Command="{Binding SaveCurrentCommand}" />
-                    <Button DockPanel.Dock="Right" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
-                    <ComboBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
-                </DockPanel>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Current rules" />
+                    <TextBox Grid.Column="1" Text="{Binding SaveFile, Mode=TwoWay}" VerticalContentAlignment="Center" />
+                    <Button Grid.Column="2" Content="Save" Padding="16,0" Command="{Binding SaveRulesCommand}" />
+
+                    <Label  Grid.Row="1" Content="Rules saved" />
+                    <ComboBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Width="auto" Padding="4,0" ItemsSource="{Binding RulesSavedFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}" />
+                    <Button Grid.Column="2" Grid.Row="1" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
+                </Grid>
                 <Button Content="Add" Command="{Binding AddRuleCommand}" DockPanel.Dock="Bottom" />
                 <ItemsControl ItemsSource="{Binding Rules}"
                     ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -69,8 +87,8 @@
                                         CommandParameter="{Binding Position, Mode=TwoWay}" Grid.Column="1" />
                                 <Label Content="{Binding Position, Mode=TwoWay}" Grid.Column="2" HorizontalAlignment="Center" />
                                 <CheckBox IsChecked="{Binding IsRegex}" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBox Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="4" />
-                                <TextBox Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="5" />
+                                <TextBox VerticalContentAlignment="Center" Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="4" />
+                                <TextBox VerticalContentAlignment="Center" Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="5" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

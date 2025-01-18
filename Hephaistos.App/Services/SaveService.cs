@@ -1,36 +1,53 @@
 ﻿using Hephaistos.App.Entities;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Hephaistos.App.Services
 {
     public class SaveService
     {
-        public const string SAVE_DIRECTORY = ".hephaistos";
-        public static readonly string FULL_SAVE_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), SAVE_DIRECTORY);
-        public static readonly string CURRENT_SAVE = Path.Combine(FULL_SAVE_PATH, "current.json");
+        public const string DIRECTORY_NAME = ".hephaistos";
+        public const string AUTO_SAVE_FILE = "autosave";
+        public static readonly string FULL_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), DIRECTORY_NAME);
 
         public SaveService()
         {
-            if (!Directory.Exists(FULL_SAVE_PATH))
+            if (!Directory.Exists(FULL_PATH))
             {
-                Directory.CreateDirectory(FULL_SAVE_PATH);
+                Directory.CreateDirectory(FULL_PATH);
             }
         }
 
-        public ObservableCollection<RuleEntity>? GetCurrent()
+        public string[] GetRulesFiles()
         {
-            if (!File.Exists(CURRENT_SAVE)) return null;
-            string content = File.ReadAllText(CURRENT_SAVE);
-            if (content == "") return null;
-            ObservableCollection<RuleEntity>? rules = JsonConvert.DeserializeObject<ObservableCollection<RuleEntity>>(content);
-            return rules;
+            return Directory.GetFiles(FULL_PATH)
+                .Where(f => Path.GetExtension(f).ToLower() == ".json"
+                && Path.GetFileNameWithoutExtension(f) != AUTO_SAVE_FILE).ToArray();
         }
 
-        public void SaveCurrent(ObservableCollection<RuleEntity> rules)
+        public void SaveRules(string file, IEnumerable<RuleEntity> rules)
         {
-            File.WriteAllText(CURRENT_SAVE, JsonConvert.SerializeObject(rules));
+            File.WriteAllText(Path.Combine(FULL_PATH, file + ".json"), JsonConvert.SerializeObject(rules));
+        }
+
+        public IEnumerable<RuleEntity> LoadRules(string file)
+        {
+            string path = Path.Combine(FULL_PATH, file + ".json");
+            if (!File.Exists(path)) return [];
+            string content = File.ReadAllText(path);
+            if (content == "") return [];
+            IEnumerable<RuleEntity>? rules = JsonConvert.DeserializeObject<IEnumerable<RuleEntity>>(content);
+            return rules ?? [];
+        }
+
+        public IEnumerable<RuleEntity> AutoLoad()
+        {
+            return LoadRules(AUTO_SAVE_FILE);
+        }
+
+        public void AutoSave(IEnumerable<RuleEntity> rules)
+        {
+            SaveRules(AUTO_SAVE_FILE, rules);
         }
     }
 }
