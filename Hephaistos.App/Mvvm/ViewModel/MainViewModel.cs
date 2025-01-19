@@ -19,7 +19,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
         private string? rootDirectory;
 
         [ObservableProperty]
-        private ObservableCollection<LineEntity>? lines;
+        private ObservableCollection<LineEntity> lines = [];
 
         [ObservableProperty]
         private ObservableCollection<RuleEntity> rules = [];
@@ -127,41 +127,36 @@ namespace Hephaistos.App.Mvvm.ViewModel
         [RelayCommand]
         private void AddRule()
         {
-            Rules.Add(new()
-            {
-                Position = Rules.Count,
-            });
+            Rules.Add(new());
         }
 
         [RelayCommand]
         private void UpRule(int position)
         {
             if (position == 0) return;
-            RuleEntity rule = Rules.First(r => r.Position == position);
-            int currentIndex = Rules.IndexOf(rule);
-
-            Rules[currentIndex].Position = position - 1;
-            Rules[currentIndex - 1].Position++;
-            Rules.Move(currentIndex, currentIndex - 1);
+            Rules.Move(position, position - 1);
         }
 
         [RelayCommand]
         private void DownRule(int position)
         {
             if (position == Rules.Count - 1) return;
-            RuleEntity rule = Rules.First(r => r.Position == position);
-            int currentIndex = Rules.IndexOf(rule);
+            Rules.Move(position, position + 1);
+        }
 
-            Rules[currentIndex].Position = position + 1;
-            Rules[currentIndex + 1].Position--;
-            Rules.Move(currentIndex, currentIndex + 1);
+        [RelayCommand]
+        private void RemoveRule(RuleEntity rule)
+        {
+            Rules.Remove(rule);
         }
 
         [RelayCommand]
         private void ApplyRules()
         {
+            if (!Lines.Any() || RootDirectory == null) return;
             foreach (LineEntity element in Lines.Where(line => line.IsChecked))
             {
+                if (element.OldValue == null || element.NewValue == null) continue;
                 if (element.IsDirectory)
                 {
                     Directory.Move(
