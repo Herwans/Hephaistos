@@ -11,13 +11,18 @@
             <i:InvokeCommandAction Command="{Binding ClosingViewCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="4,0" />
+        </Style>
+    </Window.Resources>
     <TabControl>
         <TabItem Header="Replacement">
             <DockPanel LastChildFill="True">
                 <DockPanel Margin="8" DockPanel.Dock="Top">
                     <Label DockPanel.Dock="Left" Content="Directory" />
                     <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
-                    <TextBox VerticalContentAlignment="Center" Width="auto" Padding="4,0" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+                    <TextBox VerticalContentAlignment="Center" Width="auto" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
                 </DockPanel>
                 <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top" />
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
@@ -46,50 +51,66 @@
         </TabItem>
         <TabItem Header="Rules" Height="20" VerticalAlignment="Top">
             <DockPanel LastChildFill="True">
-                <Grid DockPanel.Dock="Top">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
+                <Border DockPanel.Dock="Top" Padding="8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
-                    <Label Content="Current rules" />
-                    <TextBox Grid.Column="1" Text="{Binding SaveFile, Mode=TwoWay}" VerticalContentAlignment="Center" />
-                    <Button Grid.Column="2" Content="Save" Padding="16,0" Command="{Binding SaveRulesCommand}" />
+                        <Label Content="Current rules" />
+                        <TextBox Grid.Column="1" Text="{Binding SaveFile, Mode=TwoWay}" VerticalContentAlignment="Center" />
+                        <Button Grid.Column="2" Content="Save" Padding="16,0" Command="{Binding SaveRulesCommand}" />
 
-                    <Label  Grid.Row="1" Content="Rules saved" />
-                    <ComboBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Width="auto" Padding="4,0" ItemsSource="{Binding RulesSavedFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}" />
-                    <Button Grid.Column="2" Grid.Row="1" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
-                </Grid>
+                        <Label  Grid.Row="1" Content="Rules saved" />
+                        <ComboBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Width="auto" Padding="4,0" ItemsSource="{Binding RulesSavedFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}" />
+                        <Button Grid.Column="2" Grid.Row="1" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
+                    </Grid>
+                </Border>
                 <Button Content="Add" Command="{Binding AddRuleCommand}" DockPanel.Dock="Bottom" />
                 <ItemsControl ItemsSource="{Binding Rules}"
                     ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="32">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="32" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Button Content="U"
-                                        Command="{Binding DataContext.UpRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding Position, Mode=TwoWay}" />
-                                <Button Content="D"
+                            <Border Background="LightGray" Margin="8" Padding="16" CornerRadius="16">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Button Content="U" Width="32" Height="32"
+                                            Command="{Binding DataContext.UpRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding Path=(ItemsControl.AlternationIndex),
+                        RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Button Content="D" Width="32" Height="32" Grid.Row="1"
                                         Command="{Binding DataContext.DownRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding Position, Mode=TwoWay}" Grid.Column="1" />
-                                <Label Content="{Binding Position, Mode=TwoWay}" Grid.Column="2" HorizontalAlignment="Center" />
-                                <CheckBox IsChecked="{Binding IsRegex}" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBox VerticalContentAlignment="Center" Text="{Binding Pattern, Mode=TwoWay}" Grid.Column="4" />
-                                <TextBox VerticalContentAlignment="Center" Text="{Binding Replacement, Mode=TwoWay}" Grid.Column="5" />
-                            </Grid>
+                                        CommandParameter="{Binding Path=(ItemsControl.AlternationIndex),
+                        RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Label Content="Pattern:" Grid.Column="1" />
+                                    <TextBox Grid.Column="2" VerticalContentAlignment="Center" Text="{Binding Pattern, Mode=TwoWay}" />
+                                    <Label Content="Replacement:" Grid.Column="1" Grid.Row="1" />
+                                    <TextBox Grid.Column="2" Grid.Row="1" VerticalContentAlignment="Center"  Text="{Binding Replacement, Mode=TwoWay}" />
+                                    <Button Content="X" Grid.Column="3" Grid.RowSpan="3"
+                                            Margin="8,0,0,0"
+                                            Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding Path=., Mode=TwoWay}" />
+                                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="8">
+                                        <CheckBox Content="Regex" IsChecked="{Binding IsRegex}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
