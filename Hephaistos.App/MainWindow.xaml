@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:viewmodel="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
+        xmlns:converters="clr-namespace:Hephaistos.App.Converters"
         d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         Title="MainWindow" Height="720" Width="1280">
     <i:Interaction.Triggers>
@@ -17,6 +18,7 @@
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="4,0" />
         </Style>
+        <converters:BooleanToFileTypeConverter x:Key="IsFolderConverter" />
     </Window.Resources>
     <TabControl>
         <TabItem Header="Replacement">
@@ -38,7 +40,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding IsDirectory}" />
+                            <GridViewColumn DisplayMemberBinding="{Binding IsDirectory, Converter={StaticResource IsFolderConverter}}" />
                             <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
                             <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
                             <GridViewColumn DisplayMemberBinding="{Binding Extension}" />
