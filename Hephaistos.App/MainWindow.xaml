@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:viewmodel="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         Title="MainWindow" Height="720" Width="1280">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
@@ -22,13 +24,12 @@
                 <DockPanel Margin="8" DockPanel.Dock="Top">
                     <Label DockPanel.Dock="Left" Content="Directory" />
                     <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
-                    <TextBox VerticalContentAlignment="Center" Width="auto" Margin="16,0" Text="{Binding RootDirectory, Mode=TwoWay}" />
+                    <TextBox VerticalContentAlignment="Center" Width="auto" Margin="16,0" Text="{Binding RootDirectory, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
-                <Button Content="Load" Padding="8" Margin="8" Command="{Binding LoadDirectoryContentCommand}" DockPanel.Dock="Top" />
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                     <Button Content="Refresh" Padding="8" Margin="8" Command="{Binding RefreshPreviewCommand}" DockPanel.Dock="Top" />
                 </StackPanel>
-                <Button DockPanel.Dock="Bottom" Content="APPLY" Command="{Binding ApplyRulesCommand}" />
+                <Button DockPanel.Dock="Bottom" Content="APPLY" Command="{Binding ApplyRulesCommand}" Margin="8" Height="32" />
                 <ListView ItemsSource="{Binding Lines}"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListView.View>
@@ -73,8 +74,7 @@
                     </Grid>
                 </Border>
                 <Button Content="Add" Command="{Binding AddRuleCommand}" DockPanel.Dock="Bottom" />
-                <ItemsControl ItemsSource="{Binding Rules}"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Rules}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="LightGray" Margin="8" Padding="16" CornerRadius="16">

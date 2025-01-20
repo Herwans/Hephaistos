@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Hephaistos.App.Entities;
 using Hephaistos.App.Services;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -38,12 +39,6 @@ namespace Hephaistos.App.Mvvm.ViewModel
         }
 
         [RelayCommand]
-        private void ClosingView()
-        {
-            saveService.AutoSave(Rules);
-        }
-
-        [RelayCommand]
         private void BrowseDirectory()
         {
             Microsoft.Win32.OpenFolderDialog dialog = new()
@@ -75,8 +70,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
             SaveFile = name;
         }
 
-        [RelayCommand]
-        private void LoadDirectoryContent()
+        partial void OnRootDirectoryChanged(string? value)
         {
             if (!Directory.Exists(RootDirectory)) return;
             Lines = [];
@@ -99,10 +93,11 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     NewValue = Path.GetFileNameWithoutExtension(element)
                 });
             }
+
+            ApplyRulesPreview();
         }
 
-        [RelayCommand]
-        private void RefreshPreview()
+        private void ApplyRulesPreview()
         {
             if (Lines == null || Rules == null) return;
             foreach (LineEntity line in Lines)
@@ -113,7 +108,11 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 {
                     if (rule.IsRegex)
                     {
-                        preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                        try
+                        {
+                            preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                        }
+                        catch { }
                     }
                     else
                     {
@@ -122,6 +121,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 }
                 line.NewValue = preview;
             }
+        }
+
+        [RelayCommand]
+        private void RefreshPreview()
+        {
+            ApplyRulesPreview();
         }
 
         [RelayCommand]
@@ -173,6 +178,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     );
                 }
             }
+        }
+
+        [RelayCommand]
+        private void ClosingView()
+        {
+            saveService.AutoSave(Rules);
         }
     }
 }
