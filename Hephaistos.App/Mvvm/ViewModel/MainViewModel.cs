@@ -3,6 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Hephaistos.App.Entities;
 using Hephaistos.App.Services;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -11,6 +14,9 @@ namespace Hephaistos.App.Mvvm.ViewModel
     public partial class MainViewModel : ObservableObject
     {
         private readonly SaveService saveService;
+
+        [ObservableProperty]
+        private int countOfItems;
 
         [ObservableProperty]
         private string saveFile = "";
@@ -33,14 +39,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
         public MainViewModel()
         {
             saveService = new SaveService();
-            Rules = new(saveService.AutoLoad() ?? []);
+            Rules.CollectionChanged += OnRulesChangedEvent;
+            foreach (RuleEntity r in saveService.AutoLoad())
+            {
+                Rules.Add(r);
+            }
             RulesSavedFiles = new(saveService.GetRulesFiles());
-        }
-
-        [RelayCommand]
-        private void ClosingView()
-        {
-            saveService.AutoSave(Rules);
         }
 
         [RelayCommand]
@@ -75,8 +79,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
             SaveFile = name;
         }
 
-        [RelayCommand]
-        private void LoadDirectoryContent()
+        partial void OnRootDirectoryChanged(string? value)
         {
             if (!Directory.Exists(RootDirectory)) return;
             Lines = [];
@@ -99,10 +102,11 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     NewValue = Path.GetFileNameWithoutExtension(element)
                 });
             }
+
+            ApplyRulesPreview();
         }
 
-        [RelayCommand]
-        private void RefreshPreview()
+        private void ApplyRulesPreview()
         {
             if (Lines == null || Rules == null) return;
             foreach (LineEntity line in Lines)
@@ -113,7 +117,11 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 {
                     if (rule.IsRegex)
                     {
-                        preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                        try
+                        {
+                            preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                        }
+                        catch { }
                     }
                     else
                     {
@@ -125,9 +133,48 @@ namespace Hephaistos.App.Mvvm.ViewModel
         }
 
         [RelayCommand]
+        private void RefreshPreview()
+        {
+            ApplyRulesPreview();
+        }
+
+        [RelayCommand]
         private void AddRule()
         {
             Rules.Add(new());
+        }
+
+        private void OnRulesChangedEvent(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (RuleEntity newItem in e.NewItems)
+                {
+                    if (newItem is INotifyPropertyChanged npc)
+                    {
+                        npc.PropertyChanged += OnRuleChanged;
+                    }
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (RuleEntity oldItem in e.OldItems)
+                {
+                    if (oldItem is INotifyPropertyChanged npc)
+                    {
+                        npc.PropertyChanged -= OnRuleChanged;
+                    }
+                }
+            }
+
+            CountOfItems = Rules.Count;
+            ApplyRulesPreview();
+        }
+
+        private void OnRuleChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            ApplyRulesPreview();
         }
 
         [RelayCommand]
@@ -173,6 +220,12 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     );
                 }
             }
+        }
+
+        [RelayCommand]
+        private void ClosingView()
+        {
+            saveService.AutoSave(Rules);
         }
     }
 }

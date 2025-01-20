@@ -2,10 +2,15 @@
 
 namespace Hephaistos.App.Entities
 {
-    public class RuleEntity : ObservableObject
+    public partial class RuleEntity : ObservableObject
     {
-        public bool IsRegex { get; set; } = false;
-        public string Pattern { get; set; } = "";
-        public string Replacement { get; set; } = "";
+        [ObservableProperty]
+        private bool isRegex = false;
+
+        [ObservableProperty]
+        private string pattern = "";
+
+        [ObservableProperty]
+        private string replacement = "";
     }
 }
