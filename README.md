@@ -8,10 +8,9 @@ Rules your files and folders.
 ## How to
 
 1. Select the directory by either writing the path manually or select it with the **Browse** button
-2. Click on the **Load** button to display the elements in the selected folder
-3. Go to **Rules** tab to define rules, can be either regex or simple string
-4. Go to **Replacement** tab and click on **Refresh** button to see a preview of change
-5. Click on **Apply** button to apply change
+2. Go to **Rules** tab to define rules, can be either regex or simple string
+3. Click on **Apply** button to apply change
+
 ## Authors
 
 - [@Herwans](https://www.github.com/Herwans)
