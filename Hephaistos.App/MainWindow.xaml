@@ -50,7 +50,7 @@
                     Content="APPLY"
                     DockPanel.Dock="Bottom" />
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding Lines}">
+                    <ItemsControl ItemsSource="{Binding LinesFiltered}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border

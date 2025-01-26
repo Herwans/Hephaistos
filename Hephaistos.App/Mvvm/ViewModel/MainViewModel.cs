@@ -8,12 +8,18 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Data;
 
 namespace Hephaistos.App.Mvvm.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
         private readonly SaveService saveService;
+
+        [ObservableProperty]
+        private ObservableCollection<LineEntity> linesUnfiltered;
+
+        public ICollectionView LinesFiltered { get; }
 
         [ObservableProperty]
         private int countOfItems;
@@ -23,9 +29,6 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
         [ObservableProperty]
         private string? rootDirectory;
-
-        [ObservableProperty]
-        private ObservableCollection<LineEntity> lines = [];
 
         [ObservableProperty]
         private ObservableCollection<RuleEntity> rules = [];
@@ -38,6 +41,10 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
         public MainViewModel()
         {
+            LinesUnfiltered = new();
+            LinesFiltered = CollectionViewSource.GetDefaultView(LinesUnfiltered);
+            LinesFiltered.Filter = LineFilter;
+
             saveService = new SaveService();
             Rules.CollectionChanged += OnRulesChangedEvent;
             foreach (RuleEntity r in saveService.AutoLoad())
@@ -47,63 +54,22 @@ namespace Hephaistos.App.Mvvm.ViewModel
             RulesSavedFiles = new(saveService.GetRulesFiles());
         }
 
-        [RelayCommand]
-        private void BrowseDirectory()
+        private bool LineFilter(object obj)
         {
-            Microsoft.Win32.OpenFolderDialog dialog = new()
+            if (obj is LineEntity line)
             {
-                Multiselect = false,
-                Title = "Select a folder"
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                RootDirectory = dialog.FolderName;
+                return line.NewValue != line.OldValue;
             }
-        }
-
-        [RelayCommand]
-        private void SelectAll()
-        {
-            foreach (var item in Lines)
-            {
-                item.IsChecked = true;
-            }
-        }
-
-        [RelayCommand]
-        private void UnselectAll()
-        {
-            foreach (var item in Lines)
-            {
-                item.IsChecked = false;
-            }
-        }
-
-        [RelayCommand]
-        private void SaveRules()
-        {
-            if (SaveFile == "") return;
-            saveService.SaveRules(SaveFile, Rules);
-            RulesSavedFiles = new(saveService.GetRulesFiles());
-        }
-
-        [RelayCommand]
-        private void LoadRules()
-        {
-            string? name = Path.GetFileNameWithoutExtension(SelectedFile);
-            if (name == null) return;
-            Rules = new(saveService.LoadRules(name));
-            SaveFile = name;
+            return false;
         }
 
         partial void OnRootDirectoryChanged(string? value)
         {
             if (!Directory.Exists(RootDirectory)) return;
-            Lines = [];
+            LinesUnfiltered.Clear();
             foreach (string element in Directory.GetFiles(RootDirectory))
             {
-                Lines.Add(new LineEntity
+                LinesUnfiltered.Add(new LineEntity
                 {
                     OldValue = Path.GetFileNameWithoutExtension(element),
                     NewValue = Path.GetFileNameWithoutExtension(element),
@@ -113,21 +79,20 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
             foreach (string element in Directory.GetDirectories(RootDirectory))
             {
-                Lines.Add(new LineEntity
+                LinesUnfiltered.Add(new LineEntity
                 {
                     IsDirectory = true,
                     OldValue = Path.GetFileNameWithoutExtension(element),
                     NewValue = Path.GetFileNameWithoutExtension(element)
                 });
             }
-
             ApplyRulesPreview();
         }
 
         private void ApplyRulesPreview()
         {
-            if (Lines == null || Rules == null) return;
-            foreach (LineEntity line in Lines)
+            if (LinesUnfiltered == null || Rules == null) return;
+            foreach (LineEntity line in LinesUnfiltered)
             {
                 if (line.OldValue == null) continue;
                 string preview = line.OldValue;
@@ -148,18 +113,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 }
                 line.NewValue = preview;
             }
-        }
-
-        [RelayCommand]
-        private void RefreshPreview()
-        {
-            ApplyRulesPreview();
-        }
-
-        [RelayCommand]
-        private void AddRule()
-        {
-            Rules.Add(new());
+            LinesFiltered.Refresh();
         }
 
         private void OnRulesChangedEvent(object? sender, NotifyCollectionChangedEventArgs e)
@@ -218,8 +172,8 @@ namespace Hephaistos.App.Mvvm.ViewModel
         [RelayCommand]
         private void ApplyRules()
         {
-            if (!Lines.Any() || RootDirectory == null) return;
-            foreach (LineEntity element in Lines.Where(line => line.IsChecked))
+            if (LinesFiltered.IsEmpty || RootDirectory == null) return;
+            foreach (LineEntity element in LinesFiltered)
             {
                 if (element.OldValue == null || element.NewValue == null || element.OldValue == element.NewValue) continue;
                 if (element.IsDirectory)
@@ -244,6 +198,70 @@ namespace Hephaistos.App.Mvvm.ViewModel
         private void ClosingView()
         {
             saveService.AutoSave(Rules);
+        }
+
+        [RelayCommand]
+        private void BrowseDirectory()
+        {
+            Microsoft.Win32.OpenFolderDialog dialog = new()
+            {
+                Multiselect = false,
+                Title = "Select a folder"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                RootDirectory = dialog.FolderName;
+            }
+        }
+
+        [RelayCommand]
+        private void SelectAll()
+        {
+            foreach (var item in LinesFiltered)
+            {
+                if (item is LineEntity line)
+                    line.IsChecked = true;
+            }
+        }
+
+        [RelayCommand]
+        private void UnselectAll()
+        {
+            foreach (var item in LinesFiltered)
+            {
+                if (item is LineEntity line)
+                    line.IsChecked = false;
+            }
+        }
+
+        [RelayCommand]
+        private void SaveRules()
+        {
+            if (SaveFile == "") return;
+            saveService.SaveRules(SaveFile, Rules);
+            RulesSavedFiles = new(saveService.GetRulesFiles());
+        }
+
+        [RelayCommand]
+        private void LoadRules()
+        {
+            string? name = Path.GetFileNameWithoutExtension(SelectedFile);
+            if (name == null) return;
+            Rules = new(saveService.LoadRules(name));
+            SaveFile = name;
+        }
+
+        [RelayCommand]
+        private void RefreshPreview()
+        {
+            ApplyRulesPreview();
+        }
+
+        [RelayCommand]
+        private void AddRule()
+        {
+            Rules.Add(new());
         }
     }
 }
