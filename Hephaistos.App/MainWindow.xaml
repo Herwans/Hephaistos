@@ -1,14 +1,17 @@
-﻿<Window x:Class="Hephaistos.App.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:viewmodel="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
-        xmlns:converters="clr-namespace:Hephaistos.App.Converters"
-        d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
-        Title="MainWindow" Height="720" Width="1280">
+﻿<Window
+    x:Class="Hephaistos.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Hephaistos.App.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:Hephaistos.App.Mvvm.ViewModel"
+    Title="MainWindow"
+    Width="1280"
+    Height="720"
+    d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+    mc:Ignorable="d">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding ClosingViewCommand}" />
@@ -24,34 +27,87 @@
         <TabItem Header="Replacement">
             <DockPanel LastChildFill="True">
                 <DockPanel Margin="8" DockPanel.Dock="Top">
-                    <Label DockPanel.Dock="Left" Content="Directory" />
-                    <Button DockPanel.Dock="Right" Content="Browse" Padding="16,0" Command="{Binding BrowseDirectoryCommand}" />
-                    <TextBox VerticalContentAlignment="Center" Width="auto" Margin="16,0" Text="{Binding RootDirectory, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Directory" DockPanel.Dock="Left" />
+                    <Button
+                        Padding="16,0"
+                        Command="{Binding BrowseDirectoryCommand}"
+                        Content="Browse"
+                        DockPanel.Dock="Right" />
+                    <TextBox
+                        Width="auto"
+                        Margin="16,0"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding RootDirectory, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
-                <Button DockPanel.Dock="Bottom" Content="APPLY" Command="{Binding ApplyRulesCommand}" Margin="8" Height="32" />
-                <ListView ItemsSource="{Binding Lines}"
-                                ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="32">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsChecked}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding IsDirectory, Converter={StaticResource IsFolderConverter}}" />
-                            <GridViewColumn DisplayMemberBinding="{Binding OldValue}" />
-                            <GridViewColumn DisplayMemberBinding="{Binding NewValue}" />
-                            <GridViewColumn DisplayMemberBinding="{Binding Extension}" />
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <Button
+                    Height="32"
+                    Margin="8"
+                    Command="{Binding ApplyRulesCommand}"
+                    Content="APPLY"
+                    DockPanel.Dock="Bottom" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Lines}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="8"
+                                    Background="SkyBlue"
+                                    CornerRadius="16">
+                                    <Grid Margin="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="64" />
+                                            <ColumnDefinition Width="64" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="64" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Border
+                                            Grid.RowSpan="2"
+                                            BorderBrush="Gray"
+                                            BorderThickness="0,0,1,0">
+                                            <CheckBox
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                IsChecked="{Binding IsChecked}" />
+                                        </Border>
+                                        <Label
+                                            Grid.RowSpan="2"
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Content="{Binding IsDirectory, Converter={StaticResource IsFolderConverter}}" />
+                                        <Label
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Content="{Binding OldValue}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Content="{Binding NewValue}" />
+                                        <Label
+                                            Grid.RowSpan="2"
+                                            Grid.Column="3"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Content="{Binding Extension}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </DockPanel>
         </TabItem>
-        <TabItem Header="Rules" Height="20" VerticalAlignment="Top">
+        <TabItem
+            Height="20"
+            VerticalAlignment="Top"
+            Header="Rules">
             <DockPanel LastChildFill="True">
-                <Border DockPanel.Dock="Top" Padding="8">
+                <Border Padding="8" DockPanel.Dock="Top">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -64,55 +120,106 @@
                         </Grid.RowDefinitions>
 
                         <Label Content="Current rules" />
-                        <TextBox Grid.Column="1" Text="{Binding SaveFile, Mode=TwoWay}" VerticalContentAlignment="Center" />
-                        <Button Grid.Column="2" Content="Save" Padding="16,0" Command="{Binding SaveRulesCommand}" />
+                        <TextBox
+                            Grid.Column="1"
+                            VerticalContentAlignment="Center"
+                            Text="{Binding SaveFile, Mode=TwoWay}" />
+                        <Button
+                            Grid.Column="2"
+                            Padding="16,0"
+                            Command="{Binding SaveRulesCommand}"
+                            Content="Save" />
 
-                        <Label  Grid.Row="1" Content="Rules saved" />
-                        <ComboBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Width="auto" Padding="4,0" ItemsSource="{Binding RulesSavedFiles, Mode=TwoWay}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}" />
-                        <Button Grid.Column="2" Grid.Row="1" Content="Load" Padding="16,0" Command="{Binding LoadRulesCommand}" />
+                        <Label Grid.Row="1" Content="Rules saved" />
+                        <ComboBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Width="auto"
+                            Padding="4,0"
+                            VerticalContentAlignment="Center"
+                            ItemsSource="{Binding RulesSavedFiles, Mode=TwoWay}"
+                            SelectedItem="{Binding SelectedFile, Mode=TwoWay}" />
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Padding="16,0"
+                            Command="{Binding LoadRulesCommand}"
+                            Content="Load" />
                     </Grid>
                 </Border>
-                <Button Content="Add" Command="{Binding AddRuleCommand}" DockPanel.Dock="Bottom" />
-                <ItemsControl ItemsSource="{Binding Rules}"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              AlternationCount="{Binding CountOfItems}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="LightGray" Margin="8" Padding="16" CornerRadius="16">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="32" />
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="40" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Button Content="U" Width="32" Height="32"
+                <Button
+                    Command="{Binding AddRuleCommand}"
+                    Content="Add"
+                    DockPanel.Dock="Bottom" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl AlternationCount="{Binding CountOfItems}" ItemsSource="{Binding Rules}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="8"
+                                    Padding="16"
+                                    Background="LightGray"
+                                    CornerRadius="16">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="32" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="40" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Button
+                                            Width="32"
+                                            Height="32"
                                             Command="{Binding DataContext.UpRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" />
-                                    <Button Content="D" Width="32" Height="32" Grid.Row="1"
+                                            CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                            Content="U" />
+                                        <Button
+                                            Grid.Row="1"
+                                            Width="32"
+                                            Height="32"
                                             Command="{Binding DataContext.DownRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" />
-                                    <Label Content="Pattern" Grid.Column="1" />
-                                    <TextBox Grid.Column="2" VerticalContentAlignment="Center" Text="{Binding Pattern, Mode=TwoWay}" />
-                                    <Label Content="Replacement:" Grid.Column="1" Grid.Row="1" />
-                                    <TextBox Grid.Column="2" Grid.Row="1" VerticalContentAlignment="Center"  Text="{Binding Replacement, Mode=TwoWay}" />
-                                    <Button Content="X" Grid.Column="3" Grid.RowSpan="3"
+                                            CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                            Content="D" />
+                                        <Label Grid.Column="1" Content="Pattern" />
+                                        <TextBox
+                                            Grid.Column="2"
+                                            VerticalContentAlignment="Center"
+                                            Text="{Binding Pattern, Mode=TwoWay}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Content="Replacement:" />
+                                        <TextBox
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            VerticalContentAlignment="Center"
+                                            Text="{Binding Replacement, Mode=TwoWay}" />
+                                        <Button
+                                            Grid.RowSpan="3"
+                                            Grid.Column="3"
                                             Margin="8,0,0,0"
                                             Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding Path=., Mode=TwoWay}" />
-                                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="8">
-                                        <CheckBox Content="Regex" IsChecked="{Binding IsRegex}" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                            CommandParameter="{Binding Path=., Mode=TwoWay}"
+                                            Content="X" />
+                                        <StackPanel
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            Margin="8"
+                                            Orientation="Horizontal">
+                                            <CheckBox Content="Regex" IsChecked="{Binding IsRegex}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </DockPanel>
         </TabItem>
     </TabControl>
