@@ -63,6 +63,24 @@ namespace Hephaistos.App.Mvvm.ViewModel
         }
 
         [RelayCommand]
+        private void SelectAll()
+        {
+            foreach (var item in Lines)
+            {
+                item.IsChecked = true;
+            }
+        }
+
+        [RelayCommand]
+        private void UnselectAll()
+        {
+            foreach (var item in Lines)
+            {
+                item.IsChecked = false;
+            }
+        }
+
+        [RelayCommand]
         private void SaveRules()
         {
             if (SaveFile == "") return;
@@ -203,7 +221,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
             if (!Lines.Any() || RootDirectory == null) return;
             foreach (LineEntity element in Lines.Where(line => line.IsChecked))
             {
-                if (element.OldValue == null || element.NewValue == null) continue;
+                if (element.OldValue == null || element.NewValue == null || element.OldValue == element.NewValue) continue;
                 if (element.IsDirectory)
                 {
                     Directory.Move(

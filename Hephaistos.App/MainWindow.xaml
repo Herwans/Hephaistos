@@ -39,6 +39,10 @@
                         VerticalContentAlignment="Center"
                         Text="{Binding RootDirectory, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
+                <StackPanel DockPanel.Dock="Top">
+                    <Button Command="{Binding SelectAllCommand}" Content="Select all" />
+                    <Button Command="{Binding UnselectAllCommand}" Content="Unselect all" />
+                </StackPanel>
                 <Button
                     Height="32"
                     Margin="8"
@@ -71,7 +75,7 @@
                                             <CheckBox
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                IsChecked="{Binding IsChecked}" />
+                                                IsChecked="{Binding IsChecked, Mode=TwoWay}" />
                                         </Border>
                                         <Label
                                             Grid.RowSpan="2"
