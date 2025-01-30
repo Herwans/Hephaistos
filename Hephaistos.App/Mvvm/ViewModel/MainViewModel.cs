@@ -65,6 +65,15 @@ namespace Hephaistos.App.Mvvm.ViewModel
             return false;
         }
 
+        private bool FilterChecked(object obj)
+        {
+            if (obj is LineEntity line)
+            {
+                return line.IsChecked;
+            }
+            return false;
+        }
+
         partial void OnRootDirectoryChanged(string? value)
         {
             LoadDirectory();
@@ -186,6 +195,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
         private void ApplyRules()
         {
             if (LinesFiltered.IsEmpty || RootDirectory == null) return;
+            LinesFiltered.Filter = FilterChecked;
             foreach (LineEntity element in LinesFiltered)
             {
                 if (element.OldValue == null || element.NewValue == null || element.OldValue == element.NewValue) continue;
@@ -205,6 +215,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
                     );
                 }
             }
+            LinesFiltered.Filter = LineFilter;
         }
 
         [RelayCommand]
