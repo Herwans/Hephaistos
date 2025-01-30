@@ -16,6 +16,8 @@ namespace Hephaistos.App.Mvvm.ViewModel
     {
         private readonly SaveService saveService;
 
+        public IEnumerable<RuleType> RuleTypes { get; } = Enum.GetValues(typeof(RuleType)).Cast<RuleType>();
+
         [ObservableProperty]
         private ObservableCollection<LineEntity> linesUnfiltered;
 
@@ -103,17 +105,23 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 string preview = line.OldValue;
                 foreach (RuleEntity rule in Rules.Where(r => r.Pattern != ""))
                 {
-                    if (rule.IsRegex)
+                    switch (rule.Type)
                     {
-                        try
-                        {
-                            preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
-                        }
-                        catch { }
-                    }
-                    else
-                    {
-                        preview = preview.Replace(rule.Pattern, rule.Replacement);
+                        case RuleType.Replace:
+                            preview = preview.Replace(rule.Pattern, rule.Replacement);
+                            break;
+
+                        case RuleType.Regex:
+                            try
+                            {
+                                preview = Regex.Replace(preview, rule.Pattern, rule.Replacement);
+                            }
+                            catch { }
+                            break;
+
+                        case RuleType.Trim:
+                            preview = preview.Trim(rule.Pattern.ToCharArray());
+                            break;
                     }
                 }
                 line.NewValue = preview.Trim();

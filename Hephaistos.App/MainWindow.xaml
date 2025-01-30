@@ -176,32 +176,48 @@
                                             <RowDefinition />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            Margin="8"
+                                            Orientation="Horizontal">
+                                            <ComboBox
+                                                Width="150"
+                                                ItemsSource="{Binding DataContext.RuleTypes, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                SelectedItem="{Binding Type, Mode=TwoWay}" />
+                                        </StackPanel>
                                         <Button
+                                            Grid.Row="1"
                                             Width="32"
                                             Height="32"
                                             Command="{Binding DataContext.UpRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
                                             Content="U" />
                                         <Button
-                                            Grid.Row="1"
+                                            Grid.Row="2"
                                             Width="32"
                                             Height="32"
                                             Command="{Binding DataContext.DownRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
                                             Content="D" />
-                                        <Label Grid.Column="1" Content="Pattern" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Content="Pattern" />
                                         <TextBox
+                                            Grid.Row="1"
                                             Grid.Column="2"
                                             VerticalContentAlignment="Center"
                                             Text="{Binding Pattern, Mode=TwoWay}" />
                                         <Label
-                                            Grid.Row="1"
+                                            Grid.Row="2"
                                             Grid.Column="1"
                                             Content="Replacement:" />
                                         <TextBox
-                                            Grid.Row="1"
+                                            Grid.Row="2"
                                             Grid.Column="2"
                                             VerticalContentAlignment="Center"
+                                            IsEnabled="{Binding HasReplacement}"
                                             Text="{Binding Replacement, Mode=TwoWay}" />
                                         <Button
                                             Grid.RowSpan="3"
@@ -210,14 +226,6 @@
                                             Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path=., Mode=TwoWay}"
                                             Content="X" />
-                                        <StackPanel
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            Grid.ColumnSpan="2"
-                                            Margin="8"
-                                            Orientation="Horizontal">
-                                            <CheckBox Content="Regex" IsChecked="{Binding IsRegex}" />
-                                        </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
