@@ -65,6 +65,11 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
         partial void OnRootDirectoryChanged(string? value)
         {
+            LoadDirectory();
+        }
+
+        private void LoadDirectory()
+        {
             if (!Directory.Exists(RootDirectory)) return;
             LinesUnfiltered.Clear();
             foreach (string element in Directory.GetFiles(RootDirectory))
@@ -111,7 +116,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
                         preview = preview.Replace(rule.Pattern, rule.Replacement);
                     }
                 }
-                line.NewValue = preview;
+                line.NewValue = preview.Trim();
             }
             LinesFiltered.Refresh();
         }
