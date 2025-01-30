@@ -216,6 +216,7 @@ namespace Hephaistos.App.Mvvm.ViewModel
                 }
             }
             LinesFiltered.Filter = LineFilter;
+            LoadDirectory();
         }
 
         [RelayCommand]
