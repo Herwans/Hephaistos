@@ -2,10 +2,13 @@
 
 namespace Hephaistos.App.Entities
 {
-    public class LineEntity : ObservableObject
+    public partial class LineEntity : ObservableObject
     {
         private string? newValue;
-        public bool IsChecked { get; set; } = false;
+
+        [ObservableProperty]
+        private bool isChecked = false;
+
         public bool IsDirectory { get; set; } = false;
         public string? OldValue { get; set; }
 
