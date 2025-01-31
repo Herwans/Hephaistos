@@ -25,6 +25,7 @@ namespace Hephaistos.App.Entities
     {
         Replace,
         Regex,
+        Regex_Rearrange,
         Trim
     }
 }

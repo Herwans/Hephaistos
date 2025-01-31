@@ -9,6 +9,7 @@ using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
+using System.Windows.Documents;
 
 namespace Hephaistos.App.Mvvm.ViewModel
 {
@@ -130,6 +131,10 @@ namespace Hephaistos.App.Mvvm.ViewModel
 
                         case RuleType.Trim:
                             preview = preview.Trim(rule.Pattern.ToCharArray());
+                            break;
+
+                        case RuleType.Regex_Rearrange:
+                            preview = Regex.Replace(line.OldValue, rule.Pattern, rule.Replacement);
                             break;
                     }
                 }
