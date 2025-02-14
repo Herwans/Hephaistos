@@ -1,9 +1,11 @@
-﻿<Application x:Class="Hephaistos.App.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Hephaistos.App"
-             StartupUri="MainWindow.xaml">
+﻿<Application
+    x:Class="Hephaistos.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Hephaistos.App"
+    StartupUri="MainWindow.xaml">
+
     <Application.Resources>
-         
+        <ResourceDictionary Source="Styles/DefaultStyle.xaml" />
     </Application.Resources>
 </Application>
