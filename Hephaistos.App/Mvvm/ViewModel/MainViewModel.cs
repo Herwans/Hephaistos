@@ -60,7 +60,9 @@ namespace Hephaistos.App.Mvvm.ViewModel
         {
             if (obj is LineEntity line)
             {
-                return line.NewValue != line.OldValue && !Path.Exists(Path.Combine(RootDirectory, line.NewValue + line.Extension));
+                return line.NewValue != line.OldValue
+                    && !Path.Exists(Path.Combine(RootDirectory, line.NewValue + line.Extension))
+                    && LinesUnfiltered.Where(e => e.NewValue == line.NewValue).Count() == 1;
             }
             return false;
         }
